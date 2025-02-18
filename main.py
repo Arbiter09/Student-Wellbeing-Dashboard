@@ -62,11 +62,11 @@ app.layout = html.Div([
         ], style={'width': '48%', 'display': 'inline-block', 'float': 'right', 'verticalAlign': 'top'})
     ]),
     
-    # Row for Scatter Plot and Pie Chart (unchanged)
+    # Row for Scatter Plot and Pie Chart (unchanged except for the added radio button)
     html.Div([
         html.H3("Scatter Plot and Pie Chart Analysis"),
         html.Div([
-            # Scatter Plot Section with interactive dropdowns
+            # Scatter Plot Section with interactive dropdowns and axis assignment radio button
             html.Div([
                 dcc.Dropdown(
                     id='x-axis',
@@ -79,6 +79,16 @@ app.layout = html.Div([
                     options=[{'label': col, 'value': col} for col in numerical_vars],
                     value='CGPA',
                     style={'width': '48%', 'display': 'inline-block', 'marginLeft': '4%'}
+                ),
+                # Added radio button for axis assignment
+                dcc.RadioItems(
+                    id='axis-assignment',
+                    options=[
+                        {'label': 'First dropdown → X-axis, Second dropdown → Y-axis', 'value': 'normal'},
+                        {'label': 'First dropdown → Y-axis, Second dropdown → X-axis', 'value': 'swap'}
+                    ],
+                    value='normal',
+                    style={'margin': '10px 0'}
                 ),
                 dcc.Graph(id='scatter-plot')
             ], style={'width': '48%', 'display': 'inline-block', 'verticalAlign': 'top'}),
@@ -197,10 +207,15 @@ def update_histogram(selected_var, orientation):
 @app.callback(
     Output('scatter-plot', 'figure'),
     [Input('x-axis', 'value'),
-     Input('y-axis', 'value')]
+     Input('y-axis', 'value'),
+     Input('axis-assignment', 'value')]
 )
-def update_scatter(x_var, y_var):
-    """Updates the scatter plot based on the selected x and y numerical variables."""
+def update_scatter(x_var, y_var, axis_assignment):
+    """Updates the scatter plot based on the selected x and y numerical variables and axis assignment."""
+    # Check if the user wants to swap the axes
+    if axis_assignment == 'swap':
+        x_var, y_var = y_var, x_var
+    
     fig = px.scatter(
         df,
         x=x_var,
