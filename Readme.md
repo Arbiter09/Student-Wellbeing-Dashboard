@@ -36,7 +36,7 @@ The dataset (`final_merged_data.csv`) contains the following categories:
 3. Place `final_merged_data.csv` in the project directory.
 4. Run the dashboard:
    ```bash
-   python app.py
+   python main.py
    ```
 5. Open your browser and navigate to `http://127.0.0.1:8050/`
 
